@@ -81,7 +81,7 @@ void IM6100::opr(u16 op) {
 	else if (!(op & 1)) { // group2
 	   // 1st
 	   pc += op & 010 ?
-	   (!(op & 0100) || !(ac & 04000)) && // spa ac>0 ? ac>=0 ?
+	   (!(op & 0100) || !(ac & 04000)) && // spa ac>=0
 	   (!(op & 040) || ac != 0) && // sna ac!=0
 	   (!(op & 020) || !l) // szl l==0
 	   :
@@ -118,7 +118,7 @@ int IM6100::Execute(int n) {
 		switch (op >> 9 & 7) {
 			case 0: ac &= ld(ea(op)); break; // and
 			case 1: t = ac + ld(ea(op)); ac = t & 07777; l ^= t >> 12 & 1; break; // tad
-			case 2: t = ea(op); d = ld(t) + 1 & 07777; st(t, d); pc += !d;  break; // isz
+			case 2: t = ea(op); d = ld(t) + 1 & 07777; st(t, d); pc += !d; break; // isz
 			case 3: st(ea(op), ac); ac = 0; break; // dca
 			case 4: t = ea(op); st(t, pc); pc = t + 1; break; // jms
 			case 5: pc = ea(op); break; // jmp

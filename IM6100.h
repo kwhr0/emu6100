@@ -4,7 +4,7 @@
 
 #include <cstdint>
 
-#define IM6100_TRACE			0
+#define IM6100_TRACE	0
 
 #if IM6100_TRACE
 #define IM6100_TRACE_LOG(adr, data, type) \
