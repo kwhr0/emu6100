@@ -79,21 +79,21 @@ void IM6100::opr(u16 op) {
 		C(op & 016 ? 15 : 10);
 	}
 	else if (!(op & 1)) { // group2
-	   // 1st
-	   pc += op & 010 ?
-	   (!(op & 0100) || !(ac & 04000)) && // spa ac>=0
-	   (!(op & 040) || ac != 0) && // sna ac!=0
-	   (!(op & 020) || !l) // szl l==0
-	   :
-	   (op & 0100 && (ac & 04000) != 0) || // sma ac<0
-	   (op & 040 && !ac) || // sza ac==0
-	   (op & 020 && l != 0); // snl l!=0
-	   // 2nd
-	   if (op & 0200) ac = 0; // cla
-	   // 3rd
-	   //if (op & 4) ac |= switch_register; // osr
-	   if (op & 2) halted = true;
-	   C(op & 4 ? 15 : 10);
+		// 1st
+		pc += op & 010 ?
+		(!(op & 0100) || !(ac & 04000)) && // spa ac>=0
+		(!(op & 040) || ac != 0) && // sna ac!=0
+		(!(op & 020) || !l) // szl l==0
+		:
+		(op & 0100 && (ac & 04000) != 0) || // sma ac<0
+		(op & 040 && !ac) || // sza ac==0
+		(op & 020 && l != 0); // snl l!=0
+		// 2nd
+		if (op & 0200) ac = 0; // cla
+		// 3rd
+		//if (op & 4) ac |= switch_register; // osr
+		if (op & 2) halted = true;
+		C(op & 4 ? 15 : 10);
 	}
 	else { // group3
 		// 1st
