@@ -66,28 +66,21 @@ void IM6100::opr(u16 op) {
 		// 3rd
 		if (op & 1) { u16 t = ++ac; ac = t & 07777; l ^= t >> 12 & 1; } // iac
 		// 4th
-		u16 t;
+		u16 t = ac;
 		if (op & 010) {
-			if (op & 2) { t = ac; ac = (t << 11 & 04000) | (l << 10 & 02000) | (t >> 2 & 01777); l = t >> 1 & 1; } // rtr
-			else { t = ac; ac = (t >> 1 & 03777) | (l << 11 & 04000); l = t & 1; } // rar
+			if (op & 2) { ac = (t << 11 & 04000) | (l << 10 & 02000) | (t >> 2 & 01777); l = t >> 1 & 1; } // rtr
+			else { ac = (t >> 1 & 03777) | (l << 11 & 04000); l = t & 1; } // rar
 		}
 		else if (op & 4) {
-			if (op & 2) { t = ac; ac = (t << 2 & 07774) | (l << 1 & 2) | (t >> 11 & 1); l = t >> 10 & 1; } // rtl
-			else { t = ac; ac = (t << 1 & 07776) | (l & 1); l = t >> 11 & 1; } // ral
+			if (op & 2) { ac = (t << 2 & 07774) | (l << 1 & 2) | (t >> 11 & 1); l = t >> 10 & 1; } // rtl
+			else { ac = (t << 1 & 07776) | (l & 1); l = t >> 11 & 1; } // ral
 		}
-		else if (op & 2) ac = (ac << 6 & 07700) | (ac >> 6 & 077); // bsw
+		else if (op & 2) ac = (t << 6 & 07700) | (t >> 6 & 077); // bsw
 		C(op & 016 ? 15 : 10);
 	}
 	else if (!(op & 1)) { // group2
 		// 1st
-		pc += op & 010 ?
-		(!(op & 0100) || !(ac & 04000)) && // spa ac>=0
-		(!(op & 040) || ac != 0) && // sna ac!=0
-		(!(op & 020) || !l) // szl l==0
-		:
-		(op & 0100 && (ac & 04000) != 0) || // sma ac<0
-		(op & 040 && !ac) || // sza ac==0
-		(op & 020 && l != 0); // snl l!=0
+		pc += ((op & 0100 && ac & 04000) | (op & 040 && !ac) | (op & 020 && l)) ^ (op & 010) >> 3; // spa sna szl / sma sza snl
 		// 2nd
 		if (op & 0200) ac = 0; // cla
 		// 3rd
